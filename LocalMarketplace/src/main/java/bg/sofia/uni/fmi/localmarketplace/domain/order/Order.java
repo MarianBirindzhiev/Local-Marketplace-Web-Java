@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.localmarketplace.order;
+package bg.sofia.uni.fmi.localmarketplace.domain.order;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;

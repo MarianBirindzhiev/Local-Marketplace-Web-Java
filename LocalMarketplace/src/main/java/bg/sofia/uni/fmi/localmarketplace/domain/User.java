@@ -1,28 +1,64 @@
 package bg.sofia.uni.fmi.localmarketplace.domain;
 
 import bg.sofia.uni.fmi.localmarketplace.vo.UserType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Table(name = "users")
 public class User {
 
-    //Undone
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 50)
     private String name;
+
+    @Column(nullable = false, length = 100)
     private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(unique = true, length = 20)
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false)
     private UserType userType;
-    private boolean active;
 
-    private List<Product> products;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(String name, String password, String email, UserType userType) {
+    @Column
+    private boolean active = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
+
+    protected User() {
+    }
+
+    public User(String name, String password, String email, String phone, UserType userType) {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.phone = phone;
         this.active = false;
         this.userType = userType;
 
@@ -54,12 +90,24 @@ public class User {
         this.email = email;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public UserType getUserType() {
         return userType;
     }
 
     public void setUserType(UserType userType) {
         this.userType = userType;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public boolean isActive() {

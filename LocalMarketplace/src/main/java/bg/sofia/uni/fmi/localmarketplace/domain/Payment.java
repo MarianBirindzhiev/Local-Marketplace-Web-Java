@@ -1,6 +1,6 @@
 package bg.sofia.uni.fmi.localmarketplace.domain;
 
-import bg.sofia.uni.fmi.localmarketplace.order.Order;
+import bg.sofia.uni.fmi.localmarketplace.domain.order.Order;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;
 
 import java.util.Objects;
