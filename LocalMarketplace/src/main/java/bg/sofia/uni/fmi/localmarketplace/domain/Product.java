@@ -24,7 +24,7 @@ public class Product {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="product_type", nullable = false)
+    @Column(name = "product_type", nullable = false)
     private ProductType productType;
 
     @Column(length = 100, columnDefinition = "TEXT")
@@ -87,7 +87,9 @@ public class Product {
     public int getQuantity() {
         return quantity;
     }
-    public void setQuantity(int quantity) {}
+
+    public void setQuantity(int quantity) {
+    }
 
     @Override
     public boolean equals(Object object) {

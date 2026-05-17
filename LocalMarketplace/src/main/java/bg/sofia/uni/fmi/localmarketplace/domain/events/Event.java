@@ -3,36 +3,100 @@ package bg.sofia.uni.fmi.localmarketplace.domain.events;
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.vo.DiscountType;
 import bg.sofia.uni.fmi.localmarketplace.vo.EventType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "events")
 public class Event {
 
-    private final Long id;
+    // Promotion details
+    @Embeddable
+    public class PromotionDetails {
+        @Enumerated(EnumType.STRING)
+        @Column(name = "discount_type")
+        private DiscountType discountType;
 
+        @Column(name = "discount_value")
+        private long discountValue;
+
+        public PromotionDetails() {} // Задължителен празен конструктор
+    }
+
+    // Fair details
+    @Embeddable
+    public class FairDetails {
+        @Column(name = "location")
+        private String location;
+
+        public FairDetails() {}
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EventType type;
 
-    //Stories
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    //Promotions
-    private DiscountType discountType;
-    private double discountValue;
-
-    //Craft Fairs
-    private String location;
-
-    //Stories/Promotions
-    private final User user;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private boolean isActive;
-    //Image
 
-    protected Event() {}
+    // --- Специфично за Stories ---
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    // --- EMBEDDED КЛАСОВЕ (В базата данни ще влязат като нормални колони) ---
+    @Embedded
+    private PromotionDetails promotionDetails;
+
+    @Embedded
+    private FairDetails fairDetails;
+
+    protected Event() {
+
+    }
+
+    public Event(String title, String description, EventType type, User user,
+                 LocalDateTime startDate, LocalDateTime endDate, boolean isActive,
+                 String content, PromotionDetails promotionDetails, FairDetails fairDetails) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.user = user;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isActive = isActive;
+        this.content = content;
+        this.promotionDetails = promotionDetails;
+        this.fairDetails = fairDetails;
+    }
 
     public Long getId() {
         return id;
@@ -62,40 +126,12 @@ public class Event {
         this.type = type;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public DiscountType getDiscountType() {
-        return discountType;
-    }
-
-    public void setDiscountType(DiscountType discountType) {
-        this.discountType = discountType;
-    }
-
-    public double getDiscountValue() {
-        return discountValue;
-    }
-
-    public void setDiscountValue(double discountValue) {
-        this.discountValue = discountValue;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getStartDate() {
@@ -120,6 +156,30 @@ public class Event {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public PromotionDetails getPromotionDetails() {
+        return promotionDetails;
+    }
+
+    public void setPromotionDetails(PromotionDetails promotionDetails) {
+        this.promotionDetails = promotionDetails;
+    }
+
+    public FairDetails getFairDetails() {
+        return fairDetails;
+    }
+
+    public void setFairDetails(FairDetails fairDetails) {
+        this.fairDetails = fairDetails;
     }
 
     @Override

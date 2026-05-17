@@ -1,22 +1,45 @@
 package bg.sofia.uni.fmi.localmarketplace.domain.cart;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "carts")
 public class Cart {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items;
 
+    protected Cart() {
+
+    }
+
     public Cart(Long id, User user, List<CartItem> items) {
-        if ( id == null) {
+        if (id == null) {
             throw new IllegalArgumentException("id cannot be null");
-        } else if ( user == null ) {
+        } else if (user == null) {
             throw new IllegalArgumentException("user cannot be null");
-        } else if ( items == null ) {
+        } else if (items == null) {
             throw new IllegalArgumentException("items cannot be null");
         }
         this.id = id;
