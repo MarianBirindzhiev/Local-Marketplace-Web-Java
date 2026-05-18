@@ -31,7 +31,7 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    private double price;
+    private long price;
 
     @Column(nullable = false)
     private int quantity;
@@ -44,7 +44,7 @@ public class Product {
 
     }
 
-    public Product(ProductType productType, String description, double price, User maker, int quantity) {
+    public Product(ProductType productType, String description, long price, User maker, int quantity) {
         this.productType = productType;
         this.description = description;
         this.price = price;
@@ -72,11 +72,11 @@ public class Product {
         this.description = description;
     }
 
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 

@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -23,11 +21,14 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, length = 50, unique = true)
+    private String username;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String firstName;
+
+    @Column(nullable = false, length = 50)
+    private String lastName;
 
     @Column(nullable = false, length = 100)
     private String password;
@@ -54,8 +55,11 @@ public class User {
     protected User() {
     }
 
-    public User(String name, String password, String email, String phone, UserType userType) {
-        this.name = name;
+    public User(String username, String firstName, String lastName, String password, String email, String phone,
+                UserType userType) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.password = password;
         this.email = email;
         this.phone = phone;
@@ -66,12 +70,28 @@ public class User {
         this.products = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {
@@ -118,10 +138,6 @@ public class User {
         this.active = active;
     }
 
-    public long getId() {
-        return id;
-    }
-
     public List<Product> getProducts() {
         return products;
     }
@@ -130,14 +146,18 @@ public class User {
         this.products = products;
     }
 
+    public boolean isAdmin() {
+        return userType == UserType.ADMIN;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof User user)) return false;
-        return Objects.equals(id, user.id);
+        return Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(username);
     }
 }

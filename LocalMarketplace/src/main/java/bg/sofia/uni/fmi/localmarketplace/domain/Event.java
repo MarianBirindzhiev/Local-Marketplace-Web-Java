@@ -1,6 +1,5 @@
-package bg.sofia.uni.fmi.localmarketplace.domain.events;
+package bg.sofia.uni.fmi.localmarketplace.domain;
 
-import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.vo.DiscountType;
 import bg.sofia.uni.fmi.localmarketplace.vo.EventType;
 import jakarta.persistence.Column;
