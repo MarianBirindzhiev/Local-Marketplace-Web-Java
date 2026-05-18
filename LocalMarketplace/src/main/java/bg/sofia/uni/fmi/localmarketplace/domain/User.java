@@ -1,34 +1,97 @@
 package bg.sofia.uni.fmi.localmarketplace.domain;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+import bg.sofia.uni.fmi.localmarketplace.vo.UserType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Entity
+@Table(name = "users")
 public class User {
 
-    private static final AtomicLong idCounter = new AtomicLong(1);
+    @Id
+    @Column(nullable = false, length = 50, unique = true)
+    private String username;
 
-    private String name;
+    @Column(nullable = false, length = 50)
+    private String firstName;
+
+    @Column(nullable = false, length = 50)
+    private String lastName;
+
+    @Column(nullable = false, length = 100)
     private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
-    private boolean active;
-    private final long id;
 
-    // Without lists of purchases and posted offers. They may contain ids of "owners" ( I think not )
+    @Column(unique = true, length = 20)
+    private String phone;
 
-    public User(String name, String password, String email) {
-        this.name = name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false)
+    private UserType userType;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column
+    private boolean active = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
+
+    protected User() {
+    }
+
+    public User(String username, String firstName, String lastName, String password, String email, String phone,
+                UserType userType) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.password = password;
         this.email = email;
+        this.phone = phone;
         this.active = false;
-        this.id = idCounter.getAndIncrement();
+        this.userType = userType;
+
+        // For Vendors/Admins
+        this.products = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {
@@ -47,6 +110,26 @@ public class User {
         this.email = email;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -55,18 +138,26 @@ public class User {
         this.active = active;
     }
 
-    public long getId() {
-        return id;
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public boolean isAdmin() {
+        return userType == UserType.ADMIN;
     }
 
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof User user)) return false;
-        return id == user.id;
+        return Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(username);
     }
 }

@@ -1,28 +1,55 @@
 package bg.sofia.uni.fmi.localmarketplace.domain;
 
 import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Table(name = "products")
 public class Product {
 
-    private final AtomicLong idCounter =  new AtomicLong(1);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final long id;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_type", nullable = false)
     private ProductType productType;
-    private String description;
-    private double price;
-    private int count;
-    private String location;
 
-    public Product(ProductType productType, String description, double price, int count, String location) {
-        this.id = idCounter.getAndIncrement();
+    @Column(length = 100, columnDefinition = "TEXT")
+    private String description;
+
+    @Column(nullable = false)
+    private long price;
+
+    @Column(nullable = false)
+    private int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User maker;
+
+    protected Product() {
+
+    }
+
+    public Product(ProductType productType, String description, long price, User maker, int quantity) {
         this.productType = productType;
         this.description = description;
         this.price = price;
-        this.count = count;
-        this.location = location;
+        this.maker = maker;
+        this.quantity = quantity;
     }
 
     public long getId() {
@@ -45,50 +72,29 @@ public class Product {
         this.description = description;
     }
 
-    public double getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
-    public int getCount() {
-        return count;
+    public User getMaker() {
+        return maker;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void decrementCount() {
-        this.count--;
-    }
-
-//    public double getRating() {
-//        return rating;
-//    }
-//
-//    public void setRating(float rating) {
-//        if (this.rating == null) {
-//            this.rating = (double) rating;
-//        } else {
-//            this.rating = (this.rating + (double) rating) / 2;
-//        }
-//    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+    public void setQuantity(int quantity) {
     }
 
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Product product)) return false;
-        return id == product.id;
+        return Objects.equals(id, product.id);
     }
 
     @Override

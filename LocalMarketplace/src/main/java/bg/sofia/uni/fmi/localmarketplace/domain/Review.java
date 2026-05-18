@@ -1,25 +1,52 @@
 package bg.sofia.uni.fmi.localmarketplace.domain;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
+import java.util.Objects;
+
+@Entity
+@Table(name = "reviews")
 public class Review {
 
-    private static final AtomicLong idCounter = new AtomicLong(1);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @Column(columnDefinition = "TEXT")
     private String text;
+
+    @Column(nullable = false)
     private double rating;
 
-    private final long reviewerId;
-    private final long productId;
+    protected Review() {
 
-    public Review(String text, long reviewerId, long productId, double rating) {
-        this.id = idCounter.getAndIncrement();
+    }
+
+    public Review(User user, Product product, String text, double rating) {
+        this.user = user;
+        this.product = product;
         this.text = text;
         this.rating = rating;
-        this.reviewerId = reviewerId;
-        this.productId = productId;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getText() {
@@ -30,18 +57,34 @@ public class Review {
         this.text = text;
     }
 
-    public long getReviewerId() {
-        return reviewerId;
+    public double getRating() {
+        return rating;
     }
 
-    public long getProductId() {
-        return productId;
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Review review)) return false;
-        return id == review.id;
+        return Objects.equals(id, review.id);
     }
 
     @Override
