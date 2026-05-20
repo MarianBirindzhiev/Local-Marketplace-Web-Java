@@ -1,7 +1,6 @@
 package bg.sofia.uni.fmi.localmarketplace.repository;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
-import bg.sofia.uni.fmi.localmarketplace.dto.output.UserDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

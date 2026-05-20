@@ -2,7 +2,7 @@ package bg.sofia.uni.fmi.localmarketplace.controller;
 
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.CreateUserDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.UpdateUserDTO;
-import bg.sofia.uni.fmi.localmarketplace.dto.output.UserDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.dto.output.user.UserDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/users")
 @Tag(name = "User Management", description = "Endpoints for managing users in the local marketplace")
 public class UserController {
+
+    private static final int PAGE_SIZE = 10;
 
     UserService userService;
 
@@ -61,7 +63,7 @@ public class UserController {
             description = "Zero-based page index (0..N), page size, and optional sorting criteria (e.g., username,asc)",
             schema = @Schema(type = "string", defaultValue = "page=0&size=10")
         )
-        @PageableDefault(size = 10) Pageable pageable) {
+        @PageableDefault(size = PAGE_SIZE) Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 

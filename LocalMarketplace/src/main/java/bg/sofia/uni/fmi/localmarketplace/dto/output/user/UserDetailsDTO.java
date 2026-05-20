@@ -1,10 +1,9 @@
-package bg.sofia.uni.fmi.localmarketplace.dto.output;
+package bg.sofia.uni.fmi.localmarketplace.dto.output.user;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.vo.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Schema(description = "Response body containing detailed information about a user profile.")

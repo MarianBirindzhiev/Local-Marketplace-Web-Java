@@ -2,10 +2,9 @@ package bg.sofia.uni.fmi.localmarketplace.service.contract;
 
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.CreateUserDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.UpdateUserDTO;
-import bg.sofia.uni.fmi.localmarketplace.dto.output.UserDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.dto.output.user.UserDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserAlreadyExistsException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
-import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -41,7 +40,6 @@ public interface UserService {
 
     /**
      * Registers and creates a new user in the system.
-     * Validates username and email uniqueness before persistence.
      *
      * @param registrationDTO the user data for account creation
      * @return the created user details DTO
