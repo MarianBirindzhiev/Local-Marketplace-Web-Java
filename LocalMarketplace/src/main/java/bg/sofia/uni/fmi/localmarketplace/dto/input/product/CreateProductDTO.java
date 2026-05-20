@@ -3,7 +3,6 @@ package bg.sofia.uni.fmi.localmarketplace.dto.input.product;
 import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -24,20 +23,3 @@ public record CreateProductDTO(
     int quantity
 ) {
 }
-
-
-
-
-/*
-* @Enumerated(EnumType.STRING)
-    @Column(name = "product_type", nullable = false)
-    private ProductType productType;
-
-    @Column(length = 100, columnDefinition = "TEXT")
-    private String description;
-
-    @Column(nullable = false)
-    private long price;
-
-    @Column(nullable = false)
-    private int quantity;*/
