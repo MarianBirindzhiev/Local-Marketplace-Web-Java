@@ -3,7 +3,7 @@ package bg.sofia.uni.fmi.localmarketplace.service;
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.CreateUserDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.UpdateUserDTO;
-import bg.sofia.uni.fmi.localmarketplace.dto.output.UserDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.dto.output.user.UserDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.EmailAlreadyExistsException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserAlreadyExistsException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;

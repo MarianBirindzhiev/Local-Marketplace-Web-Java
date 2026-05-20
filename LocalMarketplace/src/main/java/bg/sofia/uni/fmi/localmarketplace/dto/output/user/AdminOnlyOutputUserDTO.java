@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.localmarketplace.dto.output;
+package bg.sofia.uni.fmi.localmarketplace.dto.output.user;
 
 import bg.sofia.uni.fmi.localmarketplace.vo.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;

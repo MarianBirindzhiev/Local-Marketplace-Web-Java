@@ -18,4 +18,12 @@ public class ValidationConstants {
         public static final String LENGTH_PASSWORD = "Password should be between 6 and 50 characters long!";
         public static final String INVALID_PHONE = "Invalid number format! Must start with + and include only number.";
     }
+
+    public static class Product {
+        public static final String BLANK_NAME = "Product name should not be blank or empty!";
+        public static final String BLANK_DESCRIPTION = "Product description should not be blank or empty!";
+        public static final String NULL_TYPE = "Product type should not be null!";
+
+        public static final String LENGTH_DESCRIPTION = "Product description should not be over 100 characters long!";
+    }
 }

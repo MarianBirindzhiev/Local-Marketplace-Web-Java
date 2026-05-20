@@ -2,9 +2,7 @@ package bg.sofia.uni.fmi.localmarketplace.dto.input.user;
 
 import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -22,6 +20,5 @@ public record UpdateUserDTO(
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = ValidationConstants.User.INVALID_PHONE)
     @Schema(description = "New phone number of the user. Must not be blank and must be in valid international format.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     String phone
-
 ) {
 }
