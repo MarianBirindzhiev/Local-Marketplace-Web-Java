@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+marketplace:
+  log-level: ERROR
+  log-file: logs/marketplace-test.log
+
+logging:
+  level:
+    root: WARN
+    bg.sofia.uni.fmi.localmarketplace: ERROR
