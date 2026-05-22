@@ -3,6 +3,7 @@ package bg.sofia.uni.fmi.localmarketplace.dto.input.product;
 import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -16,10 +17,12 @@ public record CreateProductDTO(
     @Schema(description = "Description of the product. Maximum 100 characters.", requiredMode = Schema.RequiredMode.NOT_REQUIRED, maxLength = 100)
     String description,
 
+    @Min(value = 0, message = ValidationConstants.Product.MIN_PRICE)
     @Schema(description = "The price of the product. Minimum - 0 {price}", requiredMode = Schema.RequiredMode.REQUIRED, minimum = "0")
     long price,
 
-    @Schema(description = "Quantity of the product. Minimum 0", requiredMode = Schema.RequiredMode.REQUIRED, minimum = "0")
+    @Min(value = 1, message = ValidationConstants.Product.MIN_QUANTITY)
+    @Schema(description = "Quantity of the product. Minimum 1", requiredMode = Schema.RequiredMode.REQUIRED, minimum = "1")
     int quantity
 ) {
 }

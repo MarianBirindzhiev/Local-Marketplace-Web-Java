@@ -24,6 +24,15 @@ public class ValidationConstants {
         public static final String BLANK_DESCRIPTION = "Product description should not be blank or empty!";
         public static final String NULL_TYPE = "Product type should not be null!";
 
+        public static final String MIN_PRICE = "Minimum price should be 0!";
+        public static final String MIN_QUANTITY = "Product quantity should be at least 1!";
+        public static final String MIN_UPDATE_QUANTITY = "Product quantity should be at least 0!";
         public static final String LENGTH_DESCRIPTION = "Product description should not be over 100 characters long!";
+    }
+
+    public static class Review {
+        public static final String LENGTH_TEXT = "Review text should not be over 500 characters long!";
+        public static final String MIN_RATING = "Rating should be minimum 0 including!";
+        public static final String MAX_RATING = "Rating should be max 5 including!";
     }
 }

@@ -22,8 +22,8 @@ import java.util.Optional;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
-    ProductRepository productRepository;
-    UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public ProductServiceImpl(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
