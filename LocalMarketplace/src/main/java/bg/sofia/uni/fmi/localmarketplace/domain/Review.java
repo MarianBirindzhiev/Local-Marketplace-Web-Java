@@ -32,13 +32,13 @@ public class Review {
     private String text;
 
     @Column(nullable = false)
-    private double rating;
+    private int rating;
 
     protected Review() {
 
     }
 
-    public Review(User user, Product product, String text, double rating) {
+    public Review(User user, Product product, String text, int rating) {
         this.user = user;
         this.product = product;
         this.text = text;
@@ -57,11 +57,11 @@ public class Review {
         this.text = text;
     }
 
-    public double getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 

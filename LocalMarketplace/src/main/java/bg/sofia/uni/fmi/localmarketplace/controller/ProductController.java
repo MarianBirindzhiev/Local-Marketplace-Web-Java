@@ -2,19 +2,28 @@ package bg.sofia.uni.fmi.localmarketplace.controller;
 
 import bg.sofia.uni.fmi.localmarketplace.dto.input.product.CreateProductDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.product.UpdateProductDTO;
+import bg.sofia.uni.fmi.localmarketplace.dto.input.review.CreateReviewDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.product.ProductDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.dto.output.review.ReviewDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.response.ValidationErrorResponse;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.ProductService;
+import bg.sofia.uni.fmi.localmarketplace.service.contract.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +39,12 @@ import java.security.Principal;
 @Tag(name = "Product management", description = "Endpoints for managing products in the local marketplace")
 public class ProductController {
 
-    ProductService productService;
+    private final ProductService productService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ReviewService reviewService) {
         this.productService = productService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -117,6 +128,48 @@ public class ProductController {
         @Parameter(hidden = true) Principal principal) {
 
         productService.deleteProduct(id, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Get reviews for a product", description = "Retrieves a paginated list of reviews left by users for a specific product.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Reviews retrieved successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing auth credentials",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Product not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected server error",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/{productId}/comments")
+    public ResponseEntity<Page<ReviewDetailsDTO>> getReviewsByProduct(
+        @Parameter(description = "ID of the product to fetch reviews for", required = true) @PathVariable
+        Long productId,
+        @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(reviewService.getAllReviewsOfAProduct(productId, pageable));
+    }
+
+    @Operation(summary = "Add review to product", description = "Creates a new review for a product. The author is the currently authenticated user.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Review added successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid review data",
+            content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing auth credentials",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Ticket or author user not found",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected server error",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/{productId}/comments")
+    public ResponseEntity<Void> addReviewToProduct(
+        @Parameter(description = "Id of the product", required = true) @PathVariable Long productId,
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Review creation data", required = true, content = @Content)
+        @Valid @org.springframework.web.bind.annotation.RequestBody CreateReviewDTO dto) {
+
+        String author = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        reviewService.createReview(dto, author);
+
         return ResponseEntity.noContent().build();
     }
 }
