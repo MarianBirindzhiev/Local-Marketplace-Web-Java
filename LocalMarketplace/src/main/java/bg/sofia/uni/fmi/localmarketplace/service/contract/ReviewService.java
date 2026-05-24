@@ -7,6 +7,7 @@ import bg.sofia.uni.fmi.localmarketplace.dto.output.review.ReviewDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.product.ProductDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.review.ReviewDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
+import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,6 +38,7 @@ public interface ReviewService {
      * @param currentUsername the username of the reviewer
      * @return {@link ReviewDetailsDTO}
      * @throws ProductDoesNotExistException if the product does not exist
+//   * @throws UserNotFoundException        if the user is not found
      */
     ReviewDetailsDTO createReview(CreateReviewDTO dto, String currentUsername);
 
@@ -48,6 +50,7 @@ public interface ReviewService {
      * @param currentUsername the username of the reviewer
      * @return {@link ReviewDetailsDTO}
      * @throws ReviewDoesNotExistException if the review does not exist
+     * @throws UserNotFoundException       if the user is not found
      * @throws OwnershipMismatchException  if a user different from the author of the review tries modifying the review
      */
     ReviewDetailsDTO updateReview(Long id, UpdateReviewDTO dto, String currentUsername);
