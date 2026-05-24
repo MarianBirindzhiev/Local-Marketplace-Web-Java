@@ -11,6 +11,7 @@ import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 import bg.sofia.uni.fmi.localmarketplace.repository.ProductRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.UserRepository;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.ProductService;
+import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,24 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDetailsDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(ProductDetailsDTO::from);
+    }
+
+    @Override
+    public Page<ProductDetailsDTO> getProductsWithFilters(ProductType productType, String makerUsername,
+                                                          Pageable pageable) {
+        Page<Product> page;
+
+        if (productType != null && makerUsername != null && !makerUsername.isBlank()) {
+            page = productRepository.findByProductTypeAndMaker_Username(productType, makerUsername, pageable);
+        } else if (productType != null) {
+            page = productRepository.findByProductType(productType, pageable);
+        } else if (makerUsername != null && !makerUsername.isBlank()) {
+            page = productRepository.findByMakerUsername(makerUsername, pageable);
+        } else {
+            page = productRepository.findAll(pageable);
+        }
+
+        return page.map(ProductDetailsDTO::from);
     }
 
     @Override
@@ -91,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void checkIfTheMakerOfTheProductIsTheSame(User first,  User second, Long productId) {
+    private void checkIfTheMakerOfTheProductIsTheSame(User first, User second, Long productId) {
         if (first != second) {
             throw new ProductDoesNotBelongToUserExeption("Product with id " + productId + " does not belong to user " +
                 "with username " + second.getUsername());

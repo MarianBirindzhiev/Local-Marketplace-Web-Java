@@ -8,6 +8,7 @@ import bg.sofia.uni.fmi.localmarketplace.dto.output.review.ReviewDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.response.ValidationErrorResponse;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.ProductService;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.ReviewService;
+import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -47,16 +49,41 @@ public class ProductController {
         this.reviewService = reviewService;
     }
 
+//    @GetMapping
+//    @Operation(summary = "List all products",
+//        description = "Retrieves a paginated and optionally sorted list of all available products in the marketplace.")
+//    @ApiResponse(responseCode = "200", description = "Successfully retrieved the paginated list of products.")
+//    public ResponseEntity<Page<ProductDetailsDTO>> getAllProducts(
+//        @PageableDefault(size = 12, sort = "id")
+//        @Parameter(description = "Pagination parameters (page, size, sort). Page numbers are zero-based.")
+//        Pageable pageable
+//    ) {
+//        Page<ProductDetailsDTO> products = productService.getAllProducts(pageable);
+//        return ResponseEntity.ok(products);
+//    }
+
+    @Operation(
+        summary = "List and filter products",
+        description = "Retrieves a paginated list of products. Supports optional filtering by product type and the creator's username."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved the filtered list of products."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing auth credentials",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected server error",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping
-    @Operation(summary = "List all products",
-        description = "Retrieves a paginated and optionally sorted list of all available products in the marketplace.")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the paginated list of products.")
-    public ResponseEntity<Page<ProductDetailsDTO>> getAllProducts(
-        @PageableDefault(size = 12, sort = "id")
-        @Parameter(description = "Pagination parameters (page, size, sort). Page numbers are zero-based.")
-        Pageable pageable
-    ) {
-        Page<ProductDetailsDTO> products = productService.getAllProducts(pageable);
+    public ResponseEntity<Page<ProductDetailsDTO>> getProducts(
+        @Parameter(description = "Filter by type of the product")
+        @RequestParam(name = "product_type", required = false) ProductType productType,
+
+        @Parameter(description = "Filter by the unique username of the maker")
+        @RequestParam(name = "maker_username", required = false) String makerUsername,
+
+        @PageableDefault(size = 12, sort = "id") Pageable pageable) {
+
+        Page<ProductDetailsDTO> products = productService.getProductsWithFilters(productType, makerUsername, pageable);
         return ResponseEntity.ok(products);
     }
 

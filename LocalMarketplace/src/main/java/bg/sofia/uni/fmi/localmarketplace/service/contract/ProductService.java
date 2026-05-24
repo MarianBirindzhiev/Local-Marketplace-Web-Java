@@ -6,6 +6,7 @@ import bg.sofia.uni.fmi.localmarketplace.dto.output.product.ProductDetailsDTO;
 
 import bg.sofia.uni.fmi.localmarketplace.exception.product.ProductDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
+import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,6 +28,16 @@ public interface ProductService {
      * @return a page of product responses
      */
     Page<ProductDetailsDTO> getAllProducts(Pageable pageable);
+
+    /**
+     * Retrieves a paginated page of products optionally filtered by type and maker
+     *
+     * @param productType the type of the product
+     * @param makerUsername the username of the maker
+     * @param pageable pagination and sorting details for the products
+     * @return a page of product responses
+     */
+    Page<ProductDetailsDTO> getProductsWithFilters(ProductType productType, String makerUsername, Pageable pageable);
 
     /**
      * Creates a new artisan product and assigns it to the current logged-in user.
