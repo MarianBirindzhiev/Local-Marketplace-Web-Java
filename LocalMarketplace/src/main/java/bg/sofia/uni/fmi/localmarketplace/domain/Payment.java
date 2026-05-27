@@ -2,6 +2,8 @@ package bg.sofia.uni.fmi.localmarketplace.domain;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.order.Order;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;
+import bg.sofia.uni.fmi.localmarketplace.vo.PaymentMethod;
+import bg.sofia.uni.fmi.localmarketplace.vo.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,20 +31,31 @@ public class Payment {
     private Order order;
 
     @Column(nullable = false)
-    private double amount;
+    private long amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CurrencyType currency;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false)
+    private PaymentStatus paymentStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", nullable = false)
+    private PaymentMethod paymentMethod;
+
     protected Payment() {
 
     }
 
-    public Payment(Order order, double amount, CurrencyType currency) {
+    public Payment(Order order, long amount, CurrencyType currency, PaymentStatus paymentStatus,
+                   PaymentMethod paymentMethod) {
         this.order = order;
         this.amount = amount;
         this.currency = currency;
+        this.paymentStatus = paymentStatus;
+        this.paymentMethod = paymentMethod;
     }
 
     public Long getId() {
@@ -53,11 +66,11 @@ public class Payment {
         return order;
     }
 
-    public double getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
@@ -69,14 +82,30 @@ public class Payment {
         this.currency = currency;
     }
 
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Payment payment)) return false;
-        return Objects.equals(id, payment.id) && Objects.equals(order, payment.order);
+        return Objects.equals(id, payment.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, order);
+        return Objects.hashCode(id);
     }
 }
