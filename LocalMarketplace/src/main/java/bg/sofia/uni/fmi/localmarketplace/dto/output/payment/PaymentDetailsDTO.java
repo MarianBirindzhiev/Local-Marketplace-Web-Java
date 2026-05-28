@@ -4,7 +4,6 @@ import bg.sofia.uni.fmi.localmarketplace.domain.Payment;
 import bg.sofia.uni.fmi.localmarketplace.domain.order.Order;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;
 import bg.sofia.uni.fmi.localmarketplace.vo.PaymentMethod;
-import bg.sofia.uni.fmi.localmarketplace.vo.PaymentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Response body containing detailed information about a payment.")
@@ -21,9 +20,6 @@ public record PaymentDetailsDTO(
     @Schema(description = "The currency fot the payment.", requiredMode = Schema.RequiredMode.AUTO)
     CurrencyType currencyType,
 
-    @Schema(description = "The status of the payment.", requiredMode = Schema.RequiredMode.REQUIRED)
-    PaymentStatus paymentStatus,
-
     @Schema(description = "The payment method.", requiredMode = Schema.RequiredMode.REQUIRED)
     PaymentMethod paymentMethod
 ) {
@@ -36,6 +32,6 @@ public record PaymentDetailsDTO(
                 order.getCurrency());
 
         return new PaymentDetailsDTO(payment.getId(), paymentOrderDTO, payment.getAmount(), payment.getCurrency(),
-            payment.getPaymentStatus(), payment.getPaymentMethod());
+            payment.getPaymentMethod());
     }
 }

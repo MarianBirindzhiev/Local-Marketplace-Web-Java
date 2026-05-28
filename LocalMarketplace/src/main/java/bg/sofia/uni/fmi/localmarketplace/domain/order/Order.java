@@ -46,6 +46,7 @@ public class Order {
     @Column(nullable = false)
     private CurrencyType currency;
 
+    // Should I leave it like that ???
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 

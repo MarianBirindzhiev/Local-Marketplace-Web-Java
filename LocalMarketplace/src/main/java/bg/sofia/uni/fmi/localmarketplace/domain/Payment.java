@@ -3,7 +3,6 @@ package bg.sofia.uni.fmi.localmarketplace.domain;
 import bg.sofia.uni.fmi.localmarketplace.domain.order.Order;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;
 import bg.sofia.uni.fmi.localmarketplace.vo.PaymentMethod;
-import bg.sofia.uni.fmi.localmarketplace.vo.PaymentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,10 +37,6 @@ public class Payment {
     private CurrencyType currency;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status", nullable = false)
-    private PaymentStatus paymentStatus;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
@@ -49,12 +44,10 @@ public class Payment {
 
     }
 
-    public Payment(Order order, long amount, CurrencyType currency, PaymentStatus paymentStatus,
-                   PaymentMethod paymentMethod) {
+    public Payment(Order order, long amount, CurrencyType currency, PaymentMethod paymentMethod) {
         this.order = order;
         this.amount = amount;
         this.currency = currency;
-        this.paymentStatus = paymentStatus;
         this.paymentMethod = paymentMethod;
     }
 
@@ -80,14 +73,6 @@ public class Payment {
 
     public void setCurrency(CurrencyType currency) {
         this.currency = currency;
-    }
-
-    public PaymentStatus getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
     }
 
     public PaymentMethod getPaymentMethod() {

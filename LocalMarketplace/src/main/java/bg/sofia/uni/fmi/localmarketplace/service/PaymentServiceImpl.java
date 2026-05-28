@@ -1,9 +1,12 @@
 package bg.sofia.uni.fmi.localmarketplace.service;
 
 import bg.sofia.uni.fmi.localmarketplace.domain.Payment;
+import bg.sofia.uni.fmi.localmarketplace.domain.order.Order;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.payment.CreatePaymentDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.payment.PaymentDetailsDTO;
+import bg.sofia.uni.fmi.localmarketplace.exception.order.OrderDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.payment.PaymentDoesNotExistException;
+import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.repository.PaymentRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.UserRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.order.OrderRepository;
@@ -30,30 +33,26 @@ public class PaymentServiceImpl implements PaymentService {
         this.userRepository = userRepository;
     }
 
-
     @Override
     public PaymentDetailsDTO getPayment(Long id) {
-        return null;
+        return PaymentDetailsDTO.from(getPaymentById(id));
     }
 
     @Override
     public Page<PaymentDetailsDTO> getAllPaymentsOfAnOrder(Long orderId, Pageable pageable) {
-        return null;
+        return paymentRepository.findByOrder_Id(orderId, pageable).map(PaymentDetailsDTO::from);
     }
 
     @Override
     public PaymentDetailsDTO createPayment(CreatePaymentDTO dto, String username) {
-        return null;
-    }
+        Order order = getOrderById(dto.orderId());
+        if (!order.getUser().getUsername().equals(username)) {
+            throw new OwnershipMismatchException("Current user is not the owner of the order");
+        }
 
-    @Override
-    public void cancelPayment(Long id, String username) {
-
-    }
-
-    @Override
-    public void refundPayment(Long id, String username) {
-
+        Payment payment = new Payment(order, dto.amount(), order.getCurrency(), dto.paymentMethod());
+        paymentRepository.save(payment);
+        return PaymentDetailsDTO.from(payment);
     }
 
     private Payment getPaymentById(Long id) {
@@ -62,5 +61,13 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentDoesNotExistException("Payment with id " +  id + " does not exist");
         }
         return payment.get();
+    }
+
+    private Order getOrderById(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isEmpty()) {
+            throw new OrderDoesNotExistException("Order with id " +  id + " does not exist");
+        }
+        return order.get();
     }
 }
