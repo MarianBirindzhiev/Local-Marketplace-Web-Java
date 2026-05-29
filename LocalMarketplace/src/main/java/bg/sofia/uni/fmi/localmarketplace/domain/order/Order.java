@@ -1,9 +1,9 @@
 package bg.sofia.uni.fmi.localmarketplace.domain.order;
 
-import bg.sofia.uni.fmi.localmarketplace.domain.Payment;
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.vo.CurrencyType;
 import bg.sofia.uni.fmi.localmarketplace.vo.OrderStatus;
+import bg.sofia.uni.fmi.localmarketplace.vo.PaymentMethod;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,29 +36,34 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus status;
+    private CurrencyType currency;
 
-    // In lowest amount ( in BG - stotinki ) because of eventual errors with double
     @Column(nullable = false)
     private long totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CurrencyType currency;
+    @Column(name = "payment_method", nullable = false)
+    private PaymentMethod paymentMethod;
 
-    // Should I leave it like that ???
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> payments = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     protected Order() {
 
     }
 
-    public Order(User user, OrderStatus status, long totalAmount, CurrencyType currency) {
+    public Order(User user, CurrencyType currency, long totalAmount, PaymentMethod paymentMethod, OrderStatus status,
+                 List<OrderItem> orderItems) {
         this.user = user;
-        this.status = status;
-        this.totalAmount = totalAmount;
         this.currency = currency;
+        this.totalAmount = totalAmount;
+        this.paymentMethod = paymentMethod;
+        this.status = status;
+        this.orderItems = orderItems;
     }
 
     public Long getId() {
@@ -69,12 +74,12 @@ public class Order {
         return user;
     }
 
-    public OrderStatus getStatus() {
-        return status;
+    public CurrencyType getCurrency() {
+        return currency;
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
+    public void setCurrency(CurrencyType currency) {
+        this.currency = currency;
     }
 
     public long getTotalAmount() {
@@ -85,30 +90,38 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public CurrencyType getCurrency() {
-        return currency;
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setCurrency(CurrencyType currency) {
-        this.currency = currency;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
-    public List<Payment> getPayments() {
-        return payments;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public void setPayments(List<Payment> payments) {
-        this.payments = payments;
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Order order)) return false;
-        return Objects.equals(id, order.id) && Objects.equals(user, order.user);
+        return Objects.equals(id, order.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user);
+        return Objects.hashCode(id);
     }
 }
