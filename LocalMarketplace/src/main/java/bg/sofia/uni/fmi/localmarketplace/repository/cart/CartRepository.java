@@ -1,7 +1,11 @@
 package bg.sofia.uni.fmi.localmarketplace.repository.cart;
 
-import bg.sofia.uni.fmi.localmarketplace.domain.cart.CartItem;
+import bg.sofia.uni.fmi.localmarketplace.domain.cart.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartRepository extends JpaRepository<CartItem, Integer> {
+import java.util.Optional;
+
+public interface CartRepository extends JpaRepository<Cart, Long> {
+
+    Optional<Cart> findByUser_Username(String username);
 }
