@@ -40,4 +40,13 @@ public class ValidationConstants {
         public static final String NULL_PRODUCT_ID = "Product ID should not be null!";
         public static final String MIN_QUANTITY = "Quantity should be at least 1!";
     }
+
+    public static class Order {
+        public static final String NULL_PAYMENT_METHOD = "Payment method should not be null!";
+        public static final String NULL_CURRENCY = "Currency should not be null!";
+        public static final String NULL_STATUS = "Order status should not be null!";
+        public static final String EMPTY_CART = "Cannot place an order from an empty cart!";
+        public static final String INSUFFICIENT_STOCK = "Insufficient stock to fulfil the order!";
+        public static final String INVALID_STATUS_TRANSITION = "The requested status transition is not allowed!";
+    }
 }
