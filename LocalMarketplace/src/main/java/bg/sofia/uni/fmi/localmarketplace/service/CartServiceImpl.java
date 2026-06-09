@@ -8,13 +8,16 @@ import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.AddCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.UpdateCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.cart.CartDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.cart.CartItemNotFoundException;
+import bg.sofia.uni.fmi.localmarketplace.exception.cart.InsufficientStockException;
 import bg.sofia.uni.fmi.localmarketplace.exception.product.ProductDoesNotExistException;
+import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 import bg.sofia.uni.fmi.localmarketplace.repository.ProductRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.UserRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.cart.CartItemRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.cart.CartRepository;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.CartService;
+import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,15 +58,9 @@ public class CartServiceImpl implements CartService {
             .findFirst();
 
         if (existing.isPresent()) {
-            CartItem item = existing.get();
-            int newQty = item.getQuantity() + dto.quantity();
-            validateStock(product, newQty);
-            item.setQuantity(newQty);
+            incrementExistingItem(existing.get(), dto.quantity(), product);
         } else {
-            validateStock(product, dto.quantity());
-            CartItem newItem = new CartItem(cart, product, dto.quantity());
-            cartItemRepository.save(newItem);
-            cart.getItems().add(newItem);
+            addNewItemToCart(cart, product, dto.quantity());
         }
 
         return CartDetailsDTO.from(cart);
@@ -97,16 +94,25 @@ public class CartServiceImpl implements CartService {
         CartItem item = cartItemRepository.findById(itemId)
             .orElseThrow(() -> new CartItemNotFoundException("Cart item with id " + itemId + " does not exist"));
         if (!item.getCart().getUser().getUsername().equals(username)) {
-            throw new CartItemNotFoundException("Cart item with id " + itemId + " does not belong to user " + username);
+            throw new OwnershipMismatchException(ValidationConstants.Cart.ITEM_NOT_OWNED);
         }
         return item;
     }
 
+    private void incrementExistingItem(CartItem item, int additionalQty, Product product) {
+        int newQty = item.getQuantity() + additionalQty;
+        validateStock(product, newQty);
+        item.setQuantity(newQty);
+    }
+
+    private void addNewItemToCart(Cart cart, Product product, int quantity) {
+        validateStock(product, quantity);
+        cart.getItems().add(new CartItem(cart, product, quantity));
+    }
+
     private void validateStock(Product product, int requestedQty) {
         if (requestedQty > product.getQuantity()) {
-            throw new IllegalArgumentException(
-                "Requested quantity " + requestedQty + " exceeds available stock " + product.getQuantity()
-                    + " for product " + product.getId());
+            throw new InsufficientStockException(ValidationConstants.Cart.INSUFFICIENT_STOCK);
         }
     }
 
