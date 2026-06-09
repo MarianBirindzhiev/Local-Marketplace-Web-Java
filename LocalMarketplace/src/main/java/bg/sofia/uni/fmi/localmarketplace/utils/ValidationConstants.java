@@ -35,4 +35,9 @@ public class ValidationConstants {
         public static final String MIN_RATING = "Rating should be minimum 0 including!";
         public static final String MAX_RATING = "Rating should be max 5 including!";
     }
+
+    public static class Cart {
+        public static final String NULL_PRODUCT_ID = "Product ID should not be null!";
+        public static final String MIN_QUANTITY = "Quantity should be at least 1!";
+    }
 }
