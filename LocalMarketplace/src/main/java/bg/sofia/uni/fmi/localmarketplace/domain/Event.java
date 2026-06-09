@@ -25,7 +25,7 @@ public class Event {
 
     // Promotion details
     @Embeddable
-    public class PromotionDetails {
+    public static class PromotionDetails {
         @Enumerated(EnumType.STRING)
         @Column(name = "discount_type")
         private DiscountType discountType;
@@ -33,16 +33,24 @@ public class Event {
         @Column(name = "discount_value")
         private long discountValue;
 
-        public PromotionDetails() {} // Задължителен празен конструктор
+        public PromotionDetails() {}
+
+        public DiscountType getDiscountType() { return discountType; }
+        public void setDiscountType(DiscountType discountType) { this.discountType = discountType; }
+        public long getDiscountValue() { return discountValue; }
+        public void setDiscountValue(long discountValue) { this.discountValue = discountValue; }
     }
 
     // Fair details
     @Embeddable
-    public class FairDetails {
+    public static class FairDetails {
         @Column(name = "location")
         private String location;
 
         public FairDetails() {}
+
+        public String getLocation() { return location; }
+        public void setLocation(String location) { this.location = location; }
     }
 
     @Id
