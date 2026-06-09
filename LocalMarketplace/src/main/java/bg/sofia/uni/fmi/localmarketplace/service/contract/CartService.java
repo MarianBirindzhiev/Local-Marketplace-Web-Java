@@ -4,7 +4,9 @@ import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.AddCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.UpdateCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.cart.CartDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.cart.CartItemNotFoundException;
+import bg.sofia.uni.fmi.localmarketplace.exception.cart.InsufficientStockException;
 import bg.sofia.uni.fmi.localmarketplace.exception.product.ProductDoesNotExistException;
+import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 
 public interface CartService {
@@ -26,7 +28,7 @@ public interface CartService {
      * @return updated {@link CartDetailsDTO}
      * @throws UserNotFoundException        if the user does not exist
      * @throws ProductDoesNotExistException if the product does not exist
-     * @throws IllegalArgumentException     if the requested quantity exceeds available stock
+     * @throws InsufficientStockException   if the requested quantity exceeds available stock
      */
     CartDetailsDTO addItem(String username, AddCartItemDTO dto);
 
@@ -37,8 +39,9 @@ public interface CartService {
      * @param itemId   the cart item id
      * @param dto      the new quantity
      * @return updated {@link CartDetailsDTO}
-     * @throws CartItemNotFoundException if the item does not exist or does not belong to the user
-     * @throws IllegalArgumentException  if the requested quantity exceeds available stock
+     * @throws CartItemNotFoundException  if the item does not exist
+     * @throws OwnershipMismatchException if the item does not belong to the requesting user
+     * @throws InsufficientStockException if the requested quantity exceeds available stock
      */
     CartDetailsDTO updateItemQuantity(String username, Long itemId, UpdateCartItemDTO dto);
 
@@ -47,7 +50,8 @@ public interface CartService {
      *
      * @param username the username of the cart owner
      * @param itemId   the cart item id to remove
-     * @throws CartItemNotFoundException if the item does not exist or does not belong to the user
+     * @throws CartItemNotFoundException  if the item does not exist
+     * @throws OwnershipMismatchException if the item does not belong to the requesting user
      */
     void removeItem(String username, Long itemId);
 
