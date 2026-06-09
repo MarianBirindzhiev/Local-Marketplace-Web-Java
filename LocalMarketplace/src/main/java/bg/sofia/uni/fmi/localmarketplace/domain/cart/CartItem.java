@@ -36,6 +36,19 @@ public class CartItem {
 
     }
 
+    public CartItem(Cart cart, Product product, int quantity) {
+        if (cart == null) {
+            throw new IllegalArgumentException("cart cannot be null");
+        } else if (product == null) {
+            throw new IllegalArgumentException("product cannot be null");
+        } else if (quantity < 1) {
+            throw new IllegalArgumentException("quantity must be at least 1");
+        }
+        this.cart = cart;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
     public CartItem(Long id, Cart cart, Product product, int quantity) {
         if (id == null) {
             throw new IllegalArgumentException("id cannot be null");
