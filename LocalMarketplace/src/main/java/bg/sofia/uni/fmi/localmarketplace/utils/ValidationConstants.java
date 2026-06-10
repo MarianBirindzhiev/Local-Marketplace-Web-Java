@@ -42,4 +42,13 @@ public class ValidationConstants {
         public static final String INSUFFICIENT_STOCK = "Requested quantity exceeds available stock!";
         public static final String ITEM_NOT_OWNED = "Cart item does not belong to the requesting user!";
     }
+
+    public static class Order {
+        public static final String NULL_PAYMENT_METHOD = "Payment method should not be null!";
+        public static final String NULL_CURRENCY = "Currency should not be null!";
+        public static final String NULL_STATUS = "Order status should not be null!";
+        public static final String EMPTY_CART = "Cannot place an order from an empty cart!";
+        public static final String INSUFFICIENT_STOCK = "Insufficient stock to fulfil the order!";
+        public static final String INVALID_STATUS_TRANSITION = "The requested status transition is not allowed!";
+    }
 }
