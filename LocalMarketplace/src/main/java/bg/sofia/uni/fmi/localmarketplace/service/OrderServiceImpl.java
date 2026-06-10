@@ -65,8 +65,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderDetailsDTO> getAllOrders(Pageable pageable) {
-        return orderRepository.findAll(pageable).map(OrderDetailsDTO::from);
+    public Page<OrderDetailsDTO> getOrders(String username, Pageable pageable) {
+        User user = getUser(username);
+        if (user.isAdmin()) {
+            return orderRepository.findAll(pageable).map(OrderDetailsDTO::from);
+        }
+        return orderRepository.findByUser_Username(username, pageable).map(OrderDetailsDTO::from);
     }
 
     @Override
@@ -82,44 +86,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<OrderDetailsDTO> getMyOrders(String username, Pageable pageable) {
-        return orderRepository.findByUser_Username(username, pageable).map(OrderDetailsDTO::from);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<OrderDetailsDTO> getVendorOrders(String vendorUsername, Pageable pageable) {
-        return orderRepository
-            .findDistinctByOrderItems_Product_Maker_Username(vendorUsername, pageable)
-            .map(OrderDetailsDTO::from);
-    }
-
-    @Override
     public OrderDetailsDTO updateStatus(Long id, OrderStatus newStatus, String requester) {
         // TODO: enforce vendor/admin role once Spring Security is wired
+        Order order = findOrder(id);
+        rejectIfTerminal(order);
         if (newStatus == OrderStatus.CANCELLED) {
-            throw new InvalidOrderStatusException(
-                "Use PATCH /api/orders/" + id + "/cancel to cancel an order — direct status update to CANCELLED is not allowed");
+            restoreStock(order.getOrderItems());
         }
-        Order order = findOrder(id);
-        rejectIfTerminal(order);
         order.setStatus(newStatus);
-        return OrderDetailsDTO.from(order);
-    }
-
-    @Override
-    public OrderDetailsDTO cancelOrder(Long id, String requester) {
-        // TODO: enforce customer/vendor ownership once Spring Security is wired
-        Order order = findOrder(id);
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new InvalidOrderStatusException(
-                ValidationConstants.Order.INVALID_STATUS_TRANSITION + " Order " + id + " is already cancelled");
-        }
-        rejectIfTerminal(order);
-
-        restoreStock(order.getOrderItems());
-        order.setStatus(OrderStatus.CANCELLED);
         return OrderDetailsDTO.from(order);
     }
 

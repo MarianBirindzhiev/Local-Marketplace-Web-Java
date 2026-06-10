@@ -28,12 +28,14 @@ public interface OrderService {
     OrderDetailsDTO placeOrderFromCart(String username, PlaceOrderDTO dto);
 
     /**
-     * Retrieves all orders (admin use).
+     * Retrieves orders for the given user. Admins receive all orders; non-admins receive only their own.
      *
+     * @param username the requesting user's username
      * @param pageable pagination parameters
-     * @return paginated list of all orders
+     * @return paginated list of orders
+     * @throws UserNotFoundException if the user does not exist
      */
-    Page<OrderDetailsDTO> getAllOrders(Pageable pageable);
+    Page<OrderDetailsDTO> getOrders(String username, Pageable pageable);
 
     /**
      * Retrieves a single order by ID. Accessible by the order owner or an admin.
@@ -47,44 +49,15 @@ public interface OrderService {
     OrderDetailsDTO getOrder(Long id, String username);
 
     /**
-     * Retrieves paginated orders placed by the given user.
-     *
-     * @param username the customer's username
-     * @param pageable pagination parameters
-     * @return paginated list of the user's orders
-     */
-    Page<OrderDetailsDTO> getMyOrders(String username, Pageable pageable);
-
-    /**
-     * Retrieves paginated orders that contain at least one product made by the given vendor.
-     *
-     * @param vendorUsername the vendor's username
-     * @param pageable       pagination parameters
-     * @return paginated list of relevant orders
-     */
-    Page<OrderDetailsDTO> getVendorOrders(String vendorUsername, Pageable pageable);
-
-    /**
-     * Updates the status of an order. Setting CANCELLED is rejected — use {@link #cancelOrder} instead.
+     * Updates the status of an order. When newStatus is CANCELLED, product stock is restored first.
      * Cannot transition out of a terminal state (CANCELLED or DELIVERED).
      *
      * @param id        the order ID
-     * @param newStatus the target status (must not be CANCELLED)
+     * @param newStatus the target status
      * @param requester the requesting user's username (vendor/admin role check pending Security — see §10)
      * @return updated {@link OrderDetailsDTO}
      * @throws OrderDoesNotExistException  if the order does not exist
-     * @throws InvalidOrderStatusException if newStatus is CANCELLED or the order is already in a terminal state
+     * @throws InvalidOrderStatusException if the order is already in a terminal state
      */
     OrderDetailsDTO updateStatus(Long id, OrderStatus newStatus, String requester);
-
-    /**
-     * Cancels an order and restores product stock for each order item.
-     *
-     * @param id        the order ID
-     * @param requester the requesting user's username (ownership check pending Security — see §10)
-     * @return updated {@link OrderDetailsDTO}
-     * @throws OrderDoesNotExistException  if the order does not exist
-     * @throws InvalidOrderStatusException if the order is already CANCELLED or DELIVERED
-     */
-    OrderDetailsDTO cancelOrder(Long id, String requester);
 }

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/orders")
 @Tag(name = "Order management", description = "Endpoints for placing and managing orders")
 public class OrderController {
 
@@ -39,7 +39,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/orders")
+    @PostMapping
     @Operation(summary = "Place an order from cart",
         description = "Creates an order from the current user's cart. Snapshots prices, decrements stock, sets status PENDING_PAYMENT, and clears the cart.")
     @ApiResponses({
@@ -56,20 +56,21 @@ public class OrderController {
             .body(orderService.placeOrderFromCart(principal.getName(), dto));
     }
 
-    @GetMapping("/orders")
-    @Operation(summary = "List all orders (admin)",
-        description = "Returns a paginated list of all orders. Admin use only.")
+    @GetMapping
+    @Operation(summary = "List orders",
+        description = "Admins receive all orders; authenticated non-admin users receive only their own.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
         @ApiResponse(responseCode = "401", description = "Unauthorized",
             content = @Content(schema = @Schema()))
     })
-    public ResponseEntity<Page<OrderDetailsDTO>> getAllOrders(
-        @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(orderService.getAllOrders(pageable));
+    public ResponseEntity<Page<OrderDetailsDTO>> getOrders(
+        @PageableDefault(size = 20, sort = "id") Pageable pageable,
+        @Parameter(hidden = true) Principal principal) {
+        return ResponseEntity.ok(orderService.getOrders(principal.getName(), pageable));
     }
 
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get order by ID",
         description = "Returns the order with the given ID. Accessible by the order owner or an admin.")
     @ApiResponses({
@@ -85,40 +86,12 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrder(id, principal.getName()));
     }
 
-    @GetMapping("/users/me/orders")
-    @Operation(summary = "Get my orders",
-        description = "Returns a paginated list of orders placed by the currently authenticated user.")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized",
-            content = @Content(schema = @Schema()))
-    })
-    public ResponseEntity<Page<OrderDetailsDTO>> getMyOrders(
-        @PageableDefault(size = 20, sort = "id") Pageable pageable,
-        @Parameter(hidden = true) Principal principal) {
-        return ResponseEntity.ok(orderService.getMyOrders(principal.getName(), pageable));
-    }
-
-    @GetMapping("/vendors/{vendorUsername}/orders")
-    @Operation(summary = "Get vendor orders",
-        description = "Returns a paginated list of orders that contain products made by the given vendor.")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized",
-            content = @Content(schema = @Schema()))
-    })
-    public ResponseEntity<Page<OrderDetailsDTO>> getVendorOrders(
-        @Parameter(description = "Vendor username", required = true) @PathVariable String vendorUsername,
-        @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(orderService.getVendorOrders(vendorUsername, pageable));
-    }
-
-    @PatchMapping("/orders/{id}/status")
+    @PatchMapping("/{id}/status")
     @Operation(summary = "Update order status",
-        description = "Updates the status of an order. Cannot set CANCELLED (use the /cancel endpoint) or transition out of DELIVERED.")
+        description = "Updates the status of an order. When set to CANCELLED, product stock is restored. Cannot transition out of DELIVERED or CANCELLED.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Status updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid status or transition not allowed",
+        @ApiResponse(responseCode = "400", description = "Invalid status transition",
             content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Order not found",
             content = @Content(schema = @Schema()))
@@ -128,21 +101,5 @@ public class OrderController {
         @Valid @RequestBody UpdateOrderStatusDTO dto,
         @Parameter(hidden = true) Principal principal) {
         return ResponseEntity.ok(orderService.updateStatus(id, dto.status(), principal.getName()));
-    }
-
-    @PatchMapping("/orders/{id}/cancel")
-    @Operation(summary = "Cancel an order",
-        description = "Cancels the order and restores product stock for each item.")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Order cancelled successfully"),
-        @ApiResponse(responseCode = "400", description = "Order cannot be cancelled (already CANCELLED or DELIVERED)",
-            content = @Content(schema = @Schema())),
-        @ApiResponse(responseCode = "404", description = "Order not found",
-            content = @Content(schema = @Schema()))
-    })
-    public ResponseEntity<OrderDetailsDTO> cancelOrder(
-        @Parameter(description = "Order ID", required = true) @PathVariable Long id,
-        @Parameter(hidden = true) Principal principal) {
-        return ResponseEntity.ok(orderService.cancelOrder(id, principal.getName()));
     }
 }
