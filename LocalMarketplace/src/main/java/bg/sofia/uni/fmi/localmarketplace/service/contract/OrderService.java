@@ -1,16 +1,17 @@
 package bg.sofia.uni.fmi.localmarketplace.service.contract;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import bg.sofia.uni.fmi.localmarketplace.dto.input.order.PlaceOrderDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.order.OrderDetailsDTO;
-import bg.sofia.uni.fmi.localmarketplace.exception.order.EmptyCartException;
+import bg.sofia.uni.fmi.localmarketplace.exception.cart.EmptyCartException;
 import bg.sofia.uni.fmi.localmarketplace.exception.order.InsufficientStockException;
 import bg.sofia.uni.fmi.localmarketplace.exception.order.InvalidOrderStatusException;
 import bg.sofia.uni.fmi.localmarketplace.exception.order.OrderDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 import bg.sofia.uni.fmi.localmarketplace.vo.OrderStatus;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 

@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.localmarketplace.exception.order;
+package bg.sofia.uni.fmi.localmarketplace.exception.cart;
 
 public class EmptyCartException extends RuntimeException {
 
