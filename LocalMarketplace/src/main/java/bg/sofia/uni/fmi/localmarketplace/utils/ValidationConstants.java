@@ -43,6 +43,27 @@ public class ValidationConstants {
         public static final String ITEM_NOT_OWNED = "Cart item does not belong to the requesting user!";
     }
 
+    public static class Event {
+        public static final String BLANK_TITLE = "Event title should not be blank or empty!";
+        public static final String NULL_TYPE = "Event type should not be null!";
+        public static final String LENGTH_TITLE = "Event title should be at most 255 characters long!";
+        public static final String LENGTH_DESCRIPTION = "Event description should be at most 1000 characters long!";
+        public static final String NOT_OWNED = "Event does not belong to the requesting user!";
+
+        // CRAFT_FAIRS
+        public static final String BLANK_LOCATION = "Location should not be blank for a craft fair event!";
+        public static final String NULL_START_DATE = "Start date should not be null for a craft fair or promotional campaign!";
+        public static final String NULL_END_DATE = "End date should not be null for a craft fair or promotional campaign!";
+        public static final String END_DATE_BEFORE_START_DATE = "End date must be after start date!";
+
+        // PROMOTIONAL_CAMPAIGNS
+        public static final String NULL_DISCOUNT_TYPE = "Discount type should not be null for a promotional campaign!";
+        public static final String NULL_DISCOUNT_VALUE = "Discount value should not be null for a promotional campaign!";
+        public static final String MIN_DISCOUNT_VALUE = "Discount value should be at least 0!";
+
+        // STORYTELLING_FEATURES
+        public static final String BLANK_CONTENT = "Content should not be blank for a storytelling event!";
+    }
     public static class Order {
         public static final String NULL_PAYMENT_METHOD = "Payment method should not be null!";
         public static final String NULL_CURRENCY = "Currency should not be null!";

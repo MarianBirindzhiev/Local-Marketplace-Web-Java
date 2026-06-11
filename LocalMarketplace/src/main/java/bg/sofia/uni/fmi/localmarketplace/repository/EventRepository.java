@@ -10,7 +10,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Page<Event> findByType(EventType type, Pageable pageable);
 
-    Page<Event> findByUser_Username(String username, Pageable pageable);
+    Page<Event> findByActive(boolean active, Pageable pageable);
 
-    Page<Event> findByActiveTrue(Pageable pageable);
+    Page<Event> findByTypeAndActive(EventType type, boolean active, Pageable pageable);
 }
