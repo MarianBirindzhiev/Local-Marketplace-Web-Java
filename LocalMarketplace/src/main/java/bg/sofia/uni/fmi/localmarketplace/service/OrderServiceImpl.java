@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import bg.sofia.uni.fmi.localmarketplace.domain.Payment;
 import bg.sofia.uni.fmi.localmarketplace.domain.Product;
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.domain.cart.Cart;
@@ -22,6 +23,7 @@ import bg.sofia.uni.fmi.localmarketplace.exception.order.InvalidOrderStatusExcep
 import bg.sofia.uni.fmi.localmarketplace.exception.order.OrderDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
+import bg.sofia.uni.fmi.localmarketplace.repository.PaymentRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.UserRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.cart.CartRepository;
 import bg.sofia.uni.fmi.localmarketplace.repository.order.OrderRepository;
@@ -36,12 +38,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository, CartRepository cartRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository, PaymentRepository paymentRepository) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -77,11 +81,25 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderDetailsDTO getOrder(Long id, String username) {
         Order order = findOrder(id);
-        User requester = getUser(username);
-        if (!requester.isAdmin() && !order.getUser().getUsername().equals(username)) {
-            throw new OwnershipMismatchException(
-                "Order " + id + " does not belong to user " + username);
+        assertOwnerOrAdmin(order, username);
+        return OrderDetailsDTO.from(order);
+    }
+
+    @Override
+    public OrderDetailsDTO payOrder(Long id, String requester) {
+        Order order = findOrder(id);
+        assertOwnerOrAdmin(order, requester);
+
+        if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
+            throw new InvalidOrderStatusException(
+                ValidationConstants.Payment.ORDER_NOT_IN_PENDING_PAYMENT
+                    + " Current status: " + order.getStatus());
         }
+
+        paymentRepository.save(
+            new Payment(order, order.getTotalAmount(), order.getCurrency(), order.getPaymentMethod()));
+        order.setStatus(OrderStatus.PROCESSING);
+
         return OrderDetailsDTO.from(order);
     }
 
@@ -151,6 +169,14 @@ public class OrderServiceImpl implements OrderService {
         if (current == OrderStatus.DELIVERED || current == OrderStatus.CANCELLED) {
             throw new InvalidOrderStatusException(
                 ValidationConstants.Order.INVALID_STATUS_TRANSITION + " Cannot modify a " + current + " order");
+        }
+    }
+
+    private void assertOwnerOrAdmin(Order order, String username) {
+        User user = getUser(username);
+        if (!user.isAdmin() && !order.getUser().getUsername().equals(username)) {
+            throw new OwnershipMismatchException(
+                "Order " + order.getId() + " does not belong to user " + username);
         }
     }
 

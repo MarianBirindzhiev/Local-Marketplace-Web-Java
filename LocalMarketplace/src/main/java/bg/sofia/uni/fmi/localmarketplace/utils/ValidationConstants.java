@@ -73,4 +73,9 @@ public class ValidationConstants {
         public static final String INSUFFICIENT_STOCK = "Insufficient stock to fulfil the order!";
         public static final String INVALID_STATUS_TRANSITION = "The requested status transition is not allowed!";
     }
+
+    public static class Payment {
+        public static final String ORDER_NOT_IN_PENDING_PAYMENT =
+            "Order must be in PENDING_PAYMENT status to proceed with payment!";
+    }
 }

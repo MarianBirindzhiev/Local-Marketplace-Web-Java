@@ -102,4 +102,22 @@ public class OrderController {
         @Parameter(hidden = true) Principal principal) {
         return ResponseEntity.ok(orderService.updateStatus(id, dto.status(), principal.getName()));
     }
+
+    @PatchMapping("/{id}/pay")
+    @Operation(summary = "Pay for an order",
+        description = "Simulates payment for a PENDING_PAYMENT order. Records the payment and transitions the order status to PROCESSING. Accessible by the order owner or an admin.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Payment recorded, order moved to PROCESSING"),
+        @ApiResponse(responseCode = "403", description = "Requester is not the order owner or an admin",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(responseCode = "404", description = "Order not found",
+            content = @Content(schema = @Schema())),
+        @ApiResponse(responseCode = "409", description = "Order is not in PENDING_PAYMENT status",
+            content = @Content(schema = @Schema()))
+    })
+    public ResponseEntity<OrderDetailsDTO> payOrder(
+        @Parameter(description = "Order ID", required = true) @PathVariable Long id,
+        @Parameter(hidden = true) Principal principal) {
+        return ResponseEntity.ok(orderService.payOrder(id, principal.getName()));
+    }
 }
