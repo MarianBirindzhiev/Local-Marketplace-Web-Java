@@ -6,6 +6,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 public record UpdateProductDTO(
+    @Size(max = 100, message = ValidationConstants.Product.LENGTH_NAME)
+    @Schema(description = "Name of the product. Maximum 100 characters.", requiredMode = Schema.RequiredMode.NOT_REQUIRED, maxLength = 100)
+    String name,
+
     @Size(max = 100, message = ValidationConstants.Product.LENGTH_DESCRIPTION)
     @Schema(description = "Description of the product. Maximum 100 characters.", requiredMode = Schema.RequiredMode.NOT_REQUIRED, maxLength = 100)
     String description,

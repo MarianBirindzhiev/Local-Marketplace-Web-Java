@@ -27,6 +27,9 @@ public class Product {
     @Column(name = "product_type", nullable = false)
     private ProductType productType;
 
+    @Column(nullable = false, length = 100)
+    private String name;
+
     @Column(length = 100, columnDefinition = "TEXT")
     private String description;
 
@@ -44,8 +47,9 @@ public class Product {
 
     }
 
-    public Product(ProductType productType, String description, long price, User maker, int quantity) {
+    public Product(ProductType productType, String name, String description, long price, User maker, int quantity) {
         this.productType = productType;
+        this.name = name;
         this.description = description;
         this.price = price;
         this.maker = maker;
@@ -62,6 +66,14 @@ public class Product {
 
     public void setProductType(ProductType productType) {
         this.productType = productType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

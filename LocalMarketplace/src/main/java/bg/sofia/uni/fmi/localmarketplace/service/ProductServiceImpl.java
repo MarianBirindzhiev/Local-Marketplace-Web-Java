@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDetailsDTO createProduct(CreateProductDTO dto, String username) {
         User user = getUser(username);
-        Product product = new Product(dto.productType(), dto.description(), dto.price(), user, dto.quantity());
+        Product product = new Product(dto.productType(), dto.name(), dto.description(), dto.price(), user, dto.quantity());
 
         productRepository.save(product);
         return ProductDetailsDTO.from(product);
@@ -75,6 +75,9 @@ public class ProductServiceImpl implements ProductService {
 
         checkIfTheMakerOfTheProductIsTheSame(toUpdate.getMaker(), user, id);
 
+        if (dto.name() != null) {
+            toUpdate.setName(dto.name());
+        }
         toUpdate.setDescription(dto.description());
         toUpdate.setPrice(dto.price());
         toUpdate.setQuantity(dto.quantity());

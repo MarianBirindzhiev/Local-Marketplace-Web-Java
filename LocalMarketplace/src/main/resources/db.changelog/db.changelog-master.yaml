@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db.changelog/changes/007-create-order-items-table.sql
   - include:
       file: db.changelog/changes/008-create-events-table.sql
+  - include:
+      file: db.changelog/changes/009-add-product-name-column.sql
