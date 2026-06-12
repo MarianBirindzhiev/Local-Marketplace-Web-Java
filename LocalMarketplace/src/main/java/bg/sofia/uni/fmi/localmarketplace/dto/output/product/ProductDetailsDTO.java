@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Response body containing detailed information about a product.")
 public record ProductDetailsDTO(
+    @Schema(description = "Unique identifier of the product", requiredMode = Schema.RequiredMode.REQUIRED)
+    Long id,
+
     @Schema(description = "Type of the product", requiredMode = Schema.RequiredMode.REQUIRED)
     ProductType productType,
 
@@ -24,7 +27,7 @@ public record ProductDetailsDTO(
 
     public static ProductDetailsDTO from(Product product) {
 
-        return new ProductDetailsDTO(product.getProductType(), product.getDescription(),
+        return new ProductDetailsDTO(product.getId(), product.getProductType(), product.getDescription(),
             product.getPrice(), product.getQuantity(),
             new OutputProductMakerDTO(product.getMaker().getUsername(), product.getMaker().getEmail()));
     }

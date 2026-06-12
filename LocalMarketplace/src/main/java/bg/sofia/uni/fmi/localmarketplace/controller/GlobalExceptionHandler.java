@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import bg.sofia.uni.fmi.localmarketplace.exception.NotFoundException;
+import bg.sofia.uni.fmi.localmarketplace.exception.auth.InvalidCredentialsException;
 import bg.sofia.uni.fmi.localmarketplace.exception.cart.CartItemNotFoundException;
 import bg.sofia.uni.fmi.localmarketplace.exception.cart.EmptyCartException;
 import bg.sofia.uni.fmi.localmarketplace.exception.event.EventDoesNotExistException;
@@ -40,6 +41,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(InvalidCredentialsException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    }
+
 
     @ExceptionHandler({
             NotFoundException.class,
