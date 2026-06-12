@@ -1,5 +1,13 @@
 package bg.sofia.uni.fmi.localmarketplace.service;
 
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import bg.sofia.uni.fmi.localmarketplace.domain.User;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.CreateUserDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.user.UpdateUserDTO;
@@ -10,21 +18,17 @@ import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
 import bg.sofia.uni.fmi.localmarketplace.repository.UserRepository;
 import bg.sofia.uni.fmi.localmarketplace.service.contract.UserService;
 import bg.sofia.uni.fmi.localmarketplace.vo.UserType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -52,12 +56,13 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException(dto.username());
         }
 
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new IllegalArgumentException("Този имейл адрес вече се използва!");
-        }
+       if (userRepository.existsByEmail(dto.email())) {
+        throw new EmailAlreadyExistsException("Email address is already in use."); 
+       }
 
         User newUser =
-            new User(dto.username(), dto.firstName(), dto.lastName(), dto.password(), dto.email(), dto.phone(),
+            new User(dto.username(), dto.firstName(), dto.lastName(),
+                passwordEncoder.encode(dto.password()), dto.email(), dto.phone(),
                 UserType.CUSTOMER);
 
         userRepository.save(newUser);
@@ -77,7 +82,7 @@ public class UserServiceImpl implements UserService {
             existingUser.setEmail(updateDTO.email());
         }
         if (updateDTO.password() != null && !updateDTO.password().isBlank()) {
-            existingUser.setPassword(updateDTO.password());
+            existingUser.setPassword(passwordEncoder.encode(updateDTO.password()));
         }
         if (updateDTO.phone() != null && !updateDTO.phone().isBlank()) {
             existingUser.setPhone(updateDTO.phone());

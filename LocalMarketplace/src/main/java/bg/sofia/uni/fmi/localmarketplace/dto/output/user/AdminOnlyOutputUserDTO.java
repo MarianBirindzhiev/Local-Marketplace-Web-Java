@@ -14,9 +14,6 @@ public record AdminOnlyOutputUserDTO(
     @Schema(description = "Last name of the user.", requiredMode = Schema.RequiredMode.REQUIRED)
     String lastName,
 
-    @Schema(description = "Password of the user", requiredMode = Schema.RequiredMode.REQUIRED)
-    String password,
-
     @Schema(description = "Email address of the user.", requiredMode = Schema.RequiredMode.REQUIRED, format = "email")
     String email,
 
