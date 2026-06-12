@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.localmarketplace.exception.order;
+package bg.sofia.uni.fmi.localmarketplace.exception.product;
 
 public class InsufficientStockException extends RuntimeException {
 

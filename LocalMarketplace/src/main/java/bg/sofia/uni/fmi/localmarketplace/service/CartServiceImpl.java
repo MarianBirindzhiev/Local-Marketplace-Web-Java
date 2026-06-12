@@ -8,7 +8,7 @@ import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.AddCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.input.cart.UpdateCartItemDTO;
 import bg.sofia.uni.fmi.localmarketplace.dto.output.cart.CartDetailsDTO;
 import bg.sofia.uni.fmi.localmarketplace.exception.cart.CartItemNotFoundException;
-import bg.sofia.uni.fmi.localmarketplace.exception.cart.InsufficientStockException;
+import bg.sofia.uni.fmi.localmarketplace.exception.product.InsufficientStockException;
 import bg.sofia.uni.fmi.localmarketplace.exception.product.ProductDoesNotExistException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.OwnershipMismatchException;
 import bg.sofia.uni.fmi.localmarketplace.exception.user.UserNotFoundException;
