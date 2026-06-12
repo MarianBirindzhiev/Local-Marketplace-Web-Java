@@ -27,6 +27,7 @@ public class ValidationConstants {
         public static final String MIN_PRICE = "Minimum price should be 0!";
         public static final String MIN_QUANTITY = "Product quantity should be at least 1!";
         public static final String MIN_UPDATE_QUANTITY = "Product quantity should be at least 0!";
+        public static final String LENGTH_NAME = "Product name should not be over 100 characters long!";
         public static final String LENGTH_DESCRIPTION = "Product description should not be over 100 characters long!";
     }
 

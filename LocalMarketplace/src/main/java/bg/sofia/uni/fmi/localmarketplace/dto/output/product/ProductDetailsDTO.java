@@ -12,6 +12,9 @@ public record ProductDetailsDTO(
     @Schema(description = "Type of the product", requiredMode = Schema.RequiredMode.REQUIRED)
     ProductType productType,
 
+    @Schema(description = "Name of the product", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
+    String name,
+
     @Schema(description = "Description of the product", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
     String description,
 
@@ -27,8 +30,8 @@ public record ProductDetailsDTO(
 
     public static ProductDetailsDTO from(Product product) {
 
-        return new ProductDetailsDTO(product.getId(), product.getProductType(), product.getDescription(),
-            product.getPrice(), product.getQuantity(),
+        return new ProductDetailsDTO(product.getId(), product.getProductType(), product.getName(),
+            product.getDescription(), product.getPrice(), product.getQuantity(),
             new OutputProductMakerDTO(product.getMaker().getUsername(), product.getMaker().getEmail()));
     }
 }

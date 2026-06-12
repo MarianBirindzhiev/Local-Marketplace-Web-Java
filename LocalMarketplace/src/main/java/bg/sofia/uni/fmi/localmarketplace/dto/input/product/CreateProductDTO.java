@@ -4,6 +4,7 @@ import bg.sofia.uni.fmi.localmarketplace.utils.ValidationConstants;
 import bg.sofia.uni.fmi.localmarketplace.vo.ProductType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -12,6 +13,11 @@ public record CreateProductDTO(
     @NotNull(message = ValidationConstants.Product.NULL_TYPE)
     @Schema(description = "The type of the product", requiredMode = Schema.RequiredMode.REQUIRED)
     ProductType productType,
+
+    @NotBlank(message = ValidationConstants.Product.BLANK_NAME)
+    @Size(max = 100, message = ValidationConstants.Product.LENGTH_NAME)
+    @Schema(description = "Name of the product. Maximum 100 characters.", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
+    String name,
 
     @Size(max = 100, message = ValidationConstants.Product.LENGTH_DESCRIPTION)
     @Schema(description = "Description of the product. Maximum 100 characters.", requiredMode = Schema.RequiredMode.NOT_REQUIRED, maxLength = 100)
