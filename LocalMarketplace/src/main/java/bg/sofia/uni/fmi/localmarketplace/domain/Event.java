@@ -73,7 +73,9 @@ public class Event {
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private boolean isActive;
+
+    @Column(name = "is_active")
+    private boolean active;
 
     // --- Специфично за Stories ---
     @Column(columnDefinition = "TEXT")
@@ -99,7 +101,7 @@ public class Event {
         this.user = user;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.isActive = isActive;
+        this.active = isActive;
         this.content = content;
         this.promotionDetails = promotionDetails;
         this.fairDetails = fairDetails;
@@ -158,11 +160,11 @@ public class Event {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     public String getContent() {

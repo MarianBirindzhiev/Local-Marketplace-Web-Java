@@ -107,7 +107,8 @@ public class CartServiceImpl implements CartService {
 
     private void addNewItemToCart(Cart cart, Product product, int quantity) {
         validateStock(product, quantity);
-        cart.getItems().add(new CartItem(cart, product, quantity));
+        CartItem saved = cartItemRepository.save(new CartItem(cart, product, quantity));
+        cart.getItems().add(saved);
     }
 
     private void validateStock(Product product, int requestedQty) {

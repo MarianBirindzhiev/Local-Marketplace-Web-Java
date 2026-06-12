@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -113,7 +113,7 @@ public class ProductController {
         @ApiResponse(responseCode = "401", description = "Unauthorized. User must be authenticated to create a product.")
     })
     public ResponseEntity<ProductDetailsDTO> createProduct(
-        @RequestBody CreateProductDTO dto,
+        @Valid @RequestBody CreateProductDTO dto,
         @Parameter(hidden = true) Principal principal) {
 
         // principal.getName() automatically returns the username of the currently logged user
@@ -133,7 +133,7 @@ public class ProductController {
         @PathVariable
         @Parameter(description = "The ID of the product to update.", required = true)
         Long id,
-        @RequestBody UpdateProductDTO dto,
+        @Valid @RequestBody UpdateProductDTO dto,
         @Parameter(hidden = true) Principal principal) {
 
         ProductDetailsDTO updatedProduct = productService.updateProduct(id, principal.getName(), dto);
