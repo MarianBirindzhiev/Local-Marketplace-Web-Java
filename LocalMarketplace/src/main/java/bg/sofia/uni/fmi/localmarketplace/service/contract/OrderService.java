@@ -61,4 +61,18 @@ public interface OrderService {
      * @throws InvalidOrderStatusException if the order is already in a terminal state
      */
     OrderDetailsDTO updateStatus(Long id, OrderStatus newStatus, String requester);
+
+    /**
+     * Simulates payment for an order. Records a Payment using the method/currency/amount already on the
+     * order, then transitions the order status from PENDING_PAYMENT to PROCESSING.
+     * Accessible by the order owner or an admin.
+     *
+     * @param id        the order ID
+     * @param requester the requesting user's username
+     * @return updated {@link OrderDetailsDTO} with status PROCESSING
+     * @throws OrderDoesNotExistException  if the order does not exist
+     * @throws OwnershipMismatchException  if the requester is neither the owner nor an admin
+     * @throws InvalidOrderStatusException if the order is not in PENDING_PAYMENT status
+     */
+    OrderDetailsDTO payOrder(Long id, String requester);
 }
