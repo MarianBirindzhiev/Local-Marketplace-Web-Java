@@ -53,6 +53,19 @@
       <!-- cart.js fills this section -->
     </section>
 
+
+    <!-- ─────────────────────────────────────────────────────
+        SLOT: Checkout
+        Target of the Cart's "Checkout" button (window.__showView('checkout')).
+        File to create: src/main/resources/static/js/checkout.js (or orders.js)
+        Flow: review cart → POST /api/orders (paymentMethod + currency)
+              → PATCH /api/orders/{id}/pay → order confirmation.
+        NOTE: the cart only hands off here; it does NOT place orders or pay.
+        ───────────────────────────────────────────────────── -->
+    <section id="view-checkout" hidden>
+      <!-- checkout.js / orders.js fills this -->
+    </section>
+
     <!-- ─────────────────────────────────────────────────────
          SLOT: Orders
          File to create: src/main/resources/static/js/orders.js
@@ -81,9 +94,13 @@
 
   <!-- FEATURE SCRIPTS — uncomment as teammates implement them
   <script src="/js/products.js"></script>
+  -->
   <script src="/js/cart.js"></script>
+  <!--
   <script src="/js/orders.js"></script>
+  -->
   <script src="/js/events.js"></script>
+  <!--
   -->
 
   <!-- ═══════════════════════════════════════════════════════
@@ -130,9 +147,9 @@
     });
 
     // ── Boot ────────────────────────────────────────────────
-    // Auth.init() renders the login/register/forgot-password
-    // forms into #view-auth and binds the logout button.
     Auth.init();
+    Cart.init();
+    Events.init();
 
     if (localStorage.getItem('jwtToken')) {
       showView('products');
